@@ -1,3 +1,13 @@
+package cmd
+
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/spf13/cobra"
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "hugo",
 	Short: "Hugo is a very fast static site generator",
@@ -5,6 +15,13 @@ var rootCmd = &cobra.Command{
 				  love by spf13 and friends in Go.
 				  Complete documentation is available at http://hugo.spf13.com`,
 	Run: func(cmd *cobra.Command, args []string) {
-	  // Do Stuff Here
+		fmt.Println("worked")
 	},
-  }
+}
+
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+}
