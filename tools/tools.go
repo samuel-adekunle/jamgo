@@ -1,3 +1,6 @@
 package tools
 
-type Page interface{}
+type Page struct {
+	Title string
+	Data  []interface{}
+}

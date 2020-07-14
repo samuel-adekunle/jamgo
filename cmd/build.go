@@ -27,8 +27,13 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"plugin"
+
+	"go/token"
 
 	"github.com/spf13/cobra"
+
+	"github.com/SamtheSaint/jamgo/tools"
 )
 
 // buildCmd represents the build command
@@ -42,8 +47,11 @@ var buildCmd = &cobra.Command{
 	},
 }
 
+var fset *token.FileSet
+
 func init() {
 	rootCmd.AddCommand(buildCmd)
+	fset = token.NewFileSet()
 }
 
 func buildSite() {
@@ -60,13 +68,21 @@ func buildSite() {
 	wg.Add(len(files) - 1)
 	for _, f := range files {
 		if page := f.Name(); page != "templates" {
-			fmt.Println(page)
-			wg.Done()
+			createPageFromTemplate(page)
 		}
 	}
 	wg.Wait()
 }
 
-func createPageFromTemplate(name string, tpl *template.Template) {
-
+func createPageFromTemplate(name string) {
+	p, err := plugin.Open(fmt.Sprintf("pages/%s/%s.so", name, name))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	sym, err := p.Lookup("PageData")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(sym.(*tools.Page).Title)
+	wg.Done()
 }
