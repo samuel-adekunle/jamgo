@@ -57,8 +57,29 @@ func createPage(name string) {
 	}
 	defer f.Close()
 
-	f.WriteString("{{template \"head\"}}\n")
+	f.WriteString("{{template \"head\" .Title}}\n")
 	f.WriteString("{{template \"header\"}}\n")
 	f.WriteString("<main></main>\n")
 	f.WriteString("{{template \"footer\"}}\n")
+
+	g, err := os.Create(fmt.Sprintf("pages/%s/%s.go", name, name))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer g.Close()
+	starterString := `package main
+
+import "github.com/SamtheSaint/jamgo/tools"
+
+// PageData supples data for the page to parse
+var PageData tools.Page
+
+func init() {
+	PageData = tools.Page{
+		Title: "Index",
+		Data:  nil,
+	}
+}`
+	g.WriteString(starterString)
+
 }

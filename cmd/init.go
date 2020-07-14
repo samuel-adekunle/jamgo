@@ -27,6 +27,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"sync"
 
 	"github.com/spf13/cobra"
@@ -48,10 +49,18 @@ var initCmd = &cobra.Command{
 		os.MkdirAll("assets/js", os.ModePerm)
 
 		wg.Add(4)
-		go createDefault("pages", "index")
 		go createDefault("pages/templates", "head")
 		go createDefault("pages/templates", "header")
 		go createDefault("pages/templates", "footer")
+
+		go func() {
+			cmd := exec.Command("jamgo", "new", "page", "index")
+			err := cmd.Run()
+			if err != nil {
+				log.Fatalln(err)
+			}
+			wg.Done()
+		}()
 		wg.Wait()
 	},
 }
