@@ -108,7 +108,7 @@ func getPageData(name string, page chan<- *tools.Page, multiplePage chan<- *[]to
 	page <- data
 	close(page)
 
-	sym, err = p.Lookup("MultiplePageData")
+	sym, err = p.Lookup("PageDataCollection")
 	if err != nil {
 		log.Fatalln(err)
 	}
