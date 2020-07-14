@@ -37,8 +37,9 @@ var wg sync.WaitGroup
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
-	Use:   "init",
+	Use:   "init [name]",
 	Short: "Initialize a new jamgo application",
+	Args:  cobra.ExactArgs(1),
 	// REVIEW - add Long description
 	Long: `Longer description here.`,
 
@@ -48,7 +49,7 @@ var initCmd = &cobra.Command{
 		os.MkdirAll("assets/css", os.ModePerm)
 		os.MkdirAll("assets/js", os.ModePerm)
 
-		wg.Add(4)
+		wg.Add(5)
 		go createDefault("pages/templates", "head")
 		go createDefault("pages/templates", "header")
 		go createDefault("pages/templates", "footer")
@@ -56,6 +57,20 @@ var initCmd = &cobra.Command{
 		go func() {
 			cmd := exec.Command("jamgo", "new", "page", "index")
 			err := cmd.Run()
+			if err != nil {
+				log.Fatalln(err)
+			}
+			wg.Done()
+		}()
+
+		go func() {
+			cmd := exec.Command("go", "mod", "init", args[0])
+			err := cmd.Run()
+			if err != nil {
+				log.Fatalln(err)
+			}
+			cmd = exec.Command("go", "mod", "edit", "-require", "github.com/SamtheSaint/jamgo@master")
+			err = cmd.Run()
 			if err != nil {
 				log.Fatalln(err)
 			}
