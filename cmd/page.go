@@ -23,7 +23,9 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -49,35 +51,40 @@ func createPage(name string) {
 		log.Fatalln(err)
 	}
 
-	f, err := os.Create(fmt.Sprintf("pages/%s/%s.gohtml", name, name))
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer f.Close()
+	wg.Add(2)
+	go func() {
+		f, err := os.Create(fmt.Sprintf("pages/%s/%s.gohtml", name, name))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer f.Close()
 
-	f.WriteString("{{template \"head\" .Title}}\n")
-	f.WriteString("{{template \"header\"}}\n")
-	f.WriteString("<main></main>\n")
-	f.WriteString("{{template \"footer\"}}\n")
+		r, err := http.Get("https://raw.githubusercontent.com/SamtheSaint/jamgo/master/default/page.gohtml")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer r.Body.Close()
 
-	g, err := os.Create(fmt.Sprintf("pages/%s/%s.go", name, name))
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer g.Close()
-	starterString := `package main
+		io.Copy(f, r.Body)
+		wg.Done()
+	}()
 
-import "github.com/SamtheSaint/jamgo/tools"
+	go func() {
+		g, err := os.Create(fmt.Sprintf("pages/%s/%s.go", name, name))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer g.Close()
 
-// PageData supples data for the page to parse
-var PageData tools.Page
+		p, err := http.Get("https://raw.githubusercontent.com/SamtheSaint/jamgo/master/default/page.go")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer p.Body.Close()
 
-func init() {
-	PageData = tools.Page{
-		Title: "Index",
-		Data:  nil,
-	}
-}`
-	g.WriteString(starterString)
+		io.Copy(g, p.Body)
+		wg.Done()
+	}()
 
+	wg.Wait()
 }
