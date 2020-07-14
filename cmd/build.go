@@ -27,6 +27,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"plugin"
 
 	"go/token"
@@ -68,14 +69,20 @@ func buildSite() {
 	wg.Add(len(files) - 1)
 	for _, f := range files {
 		if page := f.Name(); page != "templates" {
-			createPageFromTemplate(page)
+			go createPageFromTemplate(page, tpl)
 		}
 	}
 	wg.Wait()
 }
 
-func createPageFromTemplate(name string) {
-	p, err := plugin.Open(fmt.Sprintf("pages/%s/%s.so", name, name))
+func getPageData(name string, page chan<- *tools.Page) {
+	os.Chdir(fmt.Sprintf("pages/%s", name))
+	cmd := exec.Command("go", "build", "-buildmode=plugin")
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	p, err := plugin.Open(fmt.Sprintf("%s.so", name))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -83,6 +90,22 @@ func createPageFromTemplate(name string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(sym.(*tools.Page).Title)
+	data, _ := sym.(*tools.Page)
+	page <- data
+	close(page)
+}
+
+func createPageFromTemplate(name string, tpl *template.Template) {
+	pageData := make(chan *tools.Page)
+	go getPageData(name, pageData)
+	page, err := os.Create(fmt.Sprintf("public/%s.html", name))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer page.Close()
+	err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), <-pageData)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	wg.Done()
 }

@@ -1,5 +1,0 @@
-package templates
-
-func init() {
-
-}
