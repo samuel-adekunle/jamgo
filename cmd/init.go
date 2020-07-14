@@ -17,6 +17,8 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -29,8 +31,24 @@ var initCmd = &cobra.Command{
 	Long: `Longer description here.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		os.MkdirAll("pages/templates", os.ModePerm)
+		os.MkdirAll("assets/img", os.ModePerm)
+		os.MkdirAll("assets/css", os.ModePerm)
+		os.MkdirAll("assets/js", os.ModePerm)
 	},
+}
+
+func createDefaultPage(name string) {
+	f, err := os.Create(fmt.Sprintf("pages/templates/%s.gohtml", name))
+	if err != nil {
+		log.Panicln(err)
+	}
+	defer f.Close()
+	
+}
+
+func createHeadTemplate() {
+
 }
 
 func init() {
