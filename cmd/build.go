@@ -22,7 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -50,9 +52,21 @@ func buildSite() {
 		log.Fatalln(err)
 	}
 	var tpl *template.Template
-	tpl = template.Must(tpl.ParseGlob("pages/*.gohtml"))
 	tpl = template.Must(tpl.ParseGlob("pages/*/*.gohtml"))
+	files, err := ioutil.ReadDir("pages")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	wg.Add(len(files) - 1)
+	for _, f := range files {
+		if page := f.Name(); page != "templates" {
+			fmt.Println(page)
+			wg.Done()
+		}
+	}
+	wg.Wait()
+}
 
-	f, _ := os.Create("public/index.html")
-	tpl.ExecuteTemplate(f, "index.gohtml", struct{ Title string }{"Index"})
+func createPageFromTemplate(name string, tpl *template.Template) {
+
 }
