@@ -47,17 +47,17 @@ var buildCmd = &cobra.Command{
 }
 
 var fset *token.FileSet
-var buildDir *string
+var buildDir string
 
 func init() {
 	rootCmd.AddCommand(buildCmd)
 	fset = token.NewFileSet()
 
-	buildDir = buildCmd.LocalFlags().StringP("dir", "d", "public", "Directory where website is built.")
+	buildCmd.Flags().StringVarP(&buildDir, "dir", "d", "public", "Directory where website is built.")
 }
 
 func buildSite() {
-	err := os.MkdirAll(*buildDir, os.ModePerm)
+	err := os.MkdirAll(buildDir, os.ModePerm)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -99,7 +99,7 @@ func getPageData(name string, page chan<- *tools.Page) {
 func createPageFromTemplate(name string, tpl *template.Template) {
 	pageData := make(chan *tools.Page)
 	go getPageData(name, pageData)
-	page, err := os.Create(fmt.Sprintf("public/%s.html", name))
+	page, err := os.Create(fmt.Sprintf("%s/%s.html", buildDir, name))
 	if err != nil {
 		log.Fatalln(err)
 	}
