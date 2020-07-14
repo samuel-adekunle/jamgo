@@ -87,7 +87,7 @@ func buildSite() {
 	wg.Wait()
 }
 
-func getPageData(name string, page chan<- *tools.Page) {
+func getPageData(name string, page chan<- *tools.Page, multiplePage chan<- []*tools.Page) {
 	curDir := fmt.Sprintf("%s/pages/%s", rootDir, name)
 	cmd := exec.Command("go", "build", "-buildmode=plugin")
 	cmd.Dir = curDir
@@ -99,6 +99,7 @@ func getPageData(name string, page chan<- *tools.Page) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	sym, err := p.Lookup("PageData")
 	if err != nil {
 		log.Fatalln(err)
@@ -106,18 +107,54 @@ func getPageData(name string, page chan<- *tools.Page) {
 	data, _ := sym.(*tools.Page)
 	page <- data
 	close(page)
+
+	sym, err = p.Lookup("MultiplePageData")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	d, _ := sym.([]*tools.Page)
+	multiplePage <- d
+	close(multiplePage)
 }
 
 func createPageFromTemplate(name string, tpl *template.Template) {
 	pageData := make(chan *tools.Page)
-	go getPageData(name, pageData)
+	multiplePageData := make(chan []*tools.Page)
+	go getPageData(name, pageData, multiplePageData)
+
 	page, err := os.Create(fmt.Sprintf("%s/%s.html", buildDir, name))
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer page.Close()
+
 	err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), <-pageData)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	if multiplePage := <-multiplePageData; multiplePage != nil {
+		var wg sync.WaitGroup
+		wg.Add(len(multiplePage))
+		err := os.MkdirAll(fmt.Sprintf("%s/%s", buildDir, name), os.ModePerm)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		for _, pageData := range multiplePage {
+			go func(p *tools.Page) {
+				page, err := os.Create(fmt.Sprintf("%s/%s/%s - %s.html", buildDir, name, name, p.Title))
+				if err != nil {
+					log.Fatalln(err)
+				}
+				defer page.Close()
+
+				err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), p)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				wg.Done()
+			}(pageData)
+		}
+		wg.Wait()
 	}
 }
