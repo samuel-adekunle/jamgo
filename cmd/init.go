@@ -17,11 +17,16 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
+
+var wg sync.WaitGroup
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -35,20 +40,29 @@ var initCmd = &cobra.Command{
 		os.MkdirAll("assets/img", os.ModePerm)
 		os.MkdirAll("assets/css", os.ModePerm)
 		os.MkdirAll("assets/js", os.ModePerm)
+
+		wg.Add(4)
+		go createDefault("pages", "index")
+		go createDefault("pages/templates", "head")
+		go createDefault("pages/templates", "header")
+		go createDefault("pages/templates", "footer")
+		wg.Wait()
 	},
 }
 
-func createDefaultPage(name string) {
-	f, err := os.Create(fmt.Sprintf("pages/templates/%s.gohtml", name))
+func createDefault(path, name string) {
+	f, err := os.Create(fmt.Sprintf("%s/%s.gohtml", path, name))
 	if err != nil {
-		log.Panicln(err)
+		log.Fatalln(err)
 	}
 	defer f.Close()
-	
-}
-
-func createHeadTemplate() {
-
+	r, err := http.Get(fmt.Sprintf("https://raw.githubusercontent.com/SamtheSaint/jamgo/master/default/%s.gohtml", name))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer r.Body.Close()
+	io.Copy(f, r.Body)
+	wg.Done()
 }
 
 func init() {
