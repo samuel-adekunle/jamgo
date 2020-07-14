@@ -22,7 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -31,16 +30,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-// REVIEW - add better descriptions
 var rootCmd = &cobra.Command{
 	Use:   "jamgo",
-	Short: "jamgo is a minimal static site generator",
-	Long:  `Longer description here.`,
-
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello World")
-		fmt.Println(viper.Get("JAMGO_NAME"))
-	},
+	Short: "Jamgo is a minimal static site generator",
+	// REVIEW - add Long description
+	Long: `Longer description here.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
