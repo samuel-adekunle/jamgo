@@ -48,28 +48,33 @@ var buildCmd = &cobra.Command{
 }
 
 var fset *token.FileSet
-var buildDir string
+var buildDir, rootDir string
 
 func init() {
 	rootCmd.AddCommand(buildCmd)
 	fset = token.NewFileSet()
 
 	buildCmd.Flags().StringVarP(&buildDir, "dir", "d", "public", "Directory where website is built.")
+	rootDir, _ = os.Getwd()
 }
 
 func buildSite() {
-	var wg sync.WaitGroup
+	var tpl *template.Template
+	tpl = template.Must(tpl.ParseGlob("pages/*/*.gohtml"))
+
 	err := os.MkdirAll(buildDir, os.ModePerm)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var tpl *template.Template
-	tpl = template.Must(tpl.ParseGlob("pages/*/*.gohtml"))
+
 	files, err := ioutil.ReadDir("pages")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	var wg sync.WaitGroup
 	wg.Add(len(files) - 1)
+
 	for _, f := range files {
 		if page := f.Name(); page != "templates" {
 			go func() {
@@ -78,17 +83,19 @@ func buildSite() {
 			}()
 		}
 	}
+
 	wg.Wait()
 }
 
 func getPageData(name string, page chan<- *tools.Page) {
-	os.Chdir(fmt.Sprintf("pages/%s", name))
+	curDir := fmt.Sprintf("%s/pages/%s", rootDir, name)
 	cmd := exec.Command("go", "build", "-buildmode=plugin")
+	cmd.Dir = curDir
 	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	p, err := plugin.Open(fmt.Sprintf("%s.so", name))
+	p, err := plugin.Open(fmt.Sprintf("%s/%s.so", curDir, name))
 	if err != nil {
 		log.Fatalln(err)
 	}
