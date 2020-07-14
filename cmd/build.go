@@ -29,6 +29,7 @@ import (
 	"os"
 	"os/exec"
 	"plugin"
+	"sync"
 
 	"go/token"
 
@@ -57,6 +58,7 @@ func init() {
 }
 
 func buildSite() {
+	var wg sync.WaitGroup
 	err := os.MkdirAll(buildDir, os.ModePerm)
 	if err != nil {
 		log.Fatalln(err)
@@ -70,7 +72,10 @@ func buildSite() {
 	wg.Add(len(files) - 1)
 	for _, f := range files {
 		if page := f.Name(); page != "templates" {
-			go createPageFromTemplate(page, tpl)
+			go func() {
+				createPageFromTemplate(page, tpl)
+				wg.Done()
+			}()
 		}
 	}
 	wg.Wait()
@@ -108,5 +113,4 @@ func createPageFromTemplate(name string, tpl *template.Template) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	wg.Done()
 }

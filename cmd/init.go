@@ -33,8 +33,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var wg sync.WaitGroup
-
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init [name]",
@@ -42,16 +40,26 @@ var initCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 
 	Run: func(cmd *cobra.Command, args []string) {
+		var wg sync.WaitGroup
+
 		os.MkdirAll("pages/templates", os.ModePerm)
 		os.MkdirAll("assets/img", os.ModePerm)
 		os.MkdirAll("assets/css", os.ModePerm)
 		os.MkdirAll("assets/js", os.ModePerm)
 
 		wg.Add(5)
-		go createDefault("pages/templates", "head")
-		go createDefault("pages/templates", "header")
-		go createDefault("pages/templates", "footer")
-
+		go func() {
+			createDefault("pages/templates", "head")
+			wg.Done()
+		}()
+		go func() {
+			go createDefault("pages/templates", "header")
+			wg.Done()
+		}()
+		go func() {
+			createDefault("pages/templates", "footer")
+			wg.Done()
+		}()
 		go func() {
 			cmd := exec.Command("jamgo", "new", "page", "index")
 			err := cmd.Run()
@@ -74,6 +82,7 @@ var initCmd = &cobra.Command{
 			}
 			wg.Done()
 		}()
+
 		wg.Wait()
 	},
 }
@@ -90,7 +99,6 @@ func createDefault(path, name string) {
 	}
 	defer r.Body.Close()
 	io.Copy(f, r.Body)
-	wg.Done()
 }
 
 func init() {

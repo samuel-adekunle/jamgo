@@ -27,6 +27,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
@@ -46,12 +47,14 @@ func init() {
 }
 
 func createPage(name string) {
+	var wg sync.WaitGroup
+	wg.Add(2)
+
 	err := os.MkdirAll(fmt.Sprintf("pages/%s", name), os.ModePerm)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	wg.Add(2)
 	go func() {
 		f, err := os.Create(fmt.Sprintf("pages/%s/%s.gohtml", name, name))
 		if err != nil {
