@@ -32,10 +32,8 @@ import (
 // templateCmd represents the template command
 var templateCmd = &cobra.Command{
 	Use:   "template [name]",
-	Short: "Create a new template, in the template directory.",
-	// REVIEW - add Long description
-	Long: `Longer description here.`,
-	Args: cobra.ExactArgs(1),
+	Short: "Create a new template, in the pages/templates directory.",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		createTemplate(args[0])
 	},

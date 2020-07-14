@@ -32,9 +32,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "jamgo",
-	Short: "Jamgo is a minimal static site generator",
-	// REVIEW - add Long description
-	Long: `Longer description here.`,
+	Short: "Jamgo is a minimal, superfast golang static site generator",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -47,8 +45,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// ANCHOR - global flags here
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -67,7 +63,7 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		log.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalln(err)
 	}
 }

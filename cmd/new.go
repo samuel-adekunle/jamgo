@@ -28,9 +28,7 @@ import (
 // newCmd represents the new command
 var newCmd = &cobra.Command{
 	Use:   "new",
-	Short: "A brief description of your command",
-	// REVIEW - add Long description
-	Long: `Longer description here.`,
+	Short: "Create a new resource.",
 }
 
 func init() {

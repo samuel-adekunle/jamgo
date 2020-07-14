@@ -31,11 +31,9 @@ import (
 
 // pageCmd represents the page command
 var pageCmd = &cobra.Command{
-	Use:   "page [path]",
-	Short: "Create a new page, relative to pages directory.",
-	// REVIEW - add Long description
-	Long: `Longer description here.`,
-	Args: cobra.ExactArgs(1),
+	Use:   "page [name]",
+	Short: "Create a new page, in pages/name directory",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		createPage(args[0])
 	},

@@ -40,8 +40,6 @@ var initCmd = &cobra.Command{
 	Use:   "init [name]",
 	Short: "Initialize a new jamgo application",
 	Args:  cobra.ExactArgs(1),
-	// REVIEW - add Long description
-	Long: `Longer description here.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		os.MkdirAll("pages/templates", os.ModePerm)

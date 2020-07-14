@@ -40,23 +40,24 @@ import (
 // buildCmd represents the build command
 var buildCmd = &cobra.Command{
 	Use:   "build",
-	Short: "Build website in public directory",
-	// REVIEW - add Long description
-	Long: `Longer description here.`,
+	Short: "Build website in specified directory.",
 	Run: func(cmd *cobra.Command, args []string) {
 		buildSite()
 	},
 }
 
 var fset *token.FileSet
+var buildDir *string
 
 func init() {
 	rootCmd.AddCommand(buildCmd)
 	fset = token.NewFileSet()
+
+	buildDir = buildCmd.LocalFlags().StringP("dir", "d", "public", "Directory where website is built.")
 }
 
 func buildSite() {
-	err := os.MkdirAll("public", os.ModePerm)
+	err := os.MkdirAll(*buildDir, os.ModePerm)
 	if err != nil {
 		log.Fatalln(err)
 	}
