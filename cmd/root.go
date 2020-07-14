@@ -24,7 +24,6 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -32,17 +31,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-
+// REVIEW - add better descriptions
 var rootCmd = &cobra.Command{
 	Use:   "jamgo",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "jamgo is a minimal static site generator",
+	Long:  `Longer description here.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Hello World")
@@ -54,49 +47,33 @@ to quickly create a Cobra application.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.jamgo.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// ANCHOR - global flags here
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".jamgo" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".jamgo")
-		viper.SetConfigType("yaml")
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	// Search config in home directory with name ".jamgo" (without extension).
+	viper.AddConfigPath(home)
+	viper.SetConfigName(".jamgo")
+	viper.SetConfigType("yaml")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println(err)
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err == nil {
+		log.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }

@@ -27,10 +27,7 @@ var initCmd = &cobra.Command{
 	Short: "Create a new jamgo application",
 	Long: `It will create the boilerplate code for a jamgo application.
 	
-	Ensure to run in the root directory.
-	
-	Usage:
-	jamgo init`,
+Ensure to run in the root directory.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("init called")
