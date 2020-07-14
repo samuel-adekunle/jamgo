@@ -142,7 +142,7 @@ func createPageFromTemplate(name string, tpl *template.Template) {
 		}
 		for _, pageData := range multiplePage {
 			go func(p tools.Page) {
-				page, err := os.Create(fmt.Sprintf("%s/%s/%s - %s.html", buildDir, name, name, p.Title))
+				page, err := os.Create(fmt.Sprintf("%s/%s/%s | %s.html", buildDir, name, name, p.Title))
 				if err != nil {
 					log.Fatalln(err)
 				}
