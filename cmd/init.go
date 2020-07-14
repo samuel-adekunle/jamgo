@@ -67,6 +67,4 @@ func createDefault(path, name string) {
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-
-	// Here you will define your flags and configuration settings.
 }
