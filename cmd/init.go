@@ -26,6 +26,7 @@ func initCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			os.MkdirAll(args[0], os.ModePerm)
 			os.Chdir(args[0])
+			defer os.Chdir("..")
 			os.MkdirAll("pages/templates", os.ModePerm)
 			os.MkdirAll("assets/img", os.ModePerm)
 			os.MkdirAll("assets/css", os.ModePerm)
@@ -60,7 +61,7 @@ func initCommand() *cobra.Command {
 				if err != nil {
 					log.Fatalln(err)
 				}
-				cmd = exec.Command("go", "mod", "edit", "-require", "github.com/SamtheSaint/jamgo@master")
+				cmd = exec.Command("go", "get", "github.com/SamtheSaint/jamgo")
 				err = cmd.Run()
 				if err != nil {
 					log.Fatalln(err)

@@ -1,9 +1,9 @@
 
-[<img src="./jamgo.svg" style="text-align: center;"></img>](./jamgo.svg)
+[<img src="https://raw.githubusercontent.com/SamtheSaint/jamgo/master/jamgo.svg" style="text-align: center;"></img>](https://raw.githubusercontent.com/SamtheSaint/jamgo/master/jamgo.svg)
 
 Jamgo is a minimal, superfast golang static site generator.
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/SamtheSaint/jamgo)](https://goreportcard.com/report/github.com/SamtheSaint/jamgo) [![PkgGoDev](https://pkg.go.dev/badge/github.com/SamtheSaint/jamgo)](https://pkg.go.dev/github.com/SamtheSaint/jamgo) ![GitHub](https://img.shields.io/github/license/SamtheSaint/jamgo) ![GitHub Release Date](https://img.shields.io/github/release-date/SamtheSaint/jamgo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/SamtheSaint/jamgo)](https://goreportcard.com/report/github.com/SamtheSaint/jamgo) [![PkgGoDev](https://pkg.go.dev/badge/github.com/SamtheSaint/jamgo)](https://pkg.go.dev/github.com/SamtheSaint/jamgo) ![GitHub](https://img.shields.io/github/license/SamtheSaint/jamgo) ![GitHub Release Date](https://img.shields.io/github/release-date/SamtheSaint/jamgo) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/SamtheSaint/jamgo)
 
 # Table of Contents
 - [Overview](#overview)

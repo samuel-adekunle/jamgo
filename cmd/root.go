@@ -4,9 +4,6 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
-
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/spf13/viper"
 )
 
 var rootCmd = &cobra.Command{
@@ -33,20 +30,20 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	// Find home directory.
-	home, err := homedir.Dir()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	// home, err := homedir.Dir()
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
 
-	// Search config in home directory with name ".jamgo" (without extension).
-	viper.AddConfigPath(home)
-	viper.SetConfigName(".jamgo")
-	viper.SetConfigType("yaml")
+	// // Search config in home directory with name ".jamgo" (without extension).
+	// viper.AddConfigPath(home)
+	// viper.SetConfigName(".jamgo")
+	// viper.SetConfigType("yaml")
 
-	viper.AutomaticEnv() // read in environment variables that match
+	// viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalln(err)
-	}
+	// // If a config file is found, read it in.
+	// if err := viper.ReadInConfig(); err != nil {
+	// 	log.Fatalln(err)
+	// }
 }

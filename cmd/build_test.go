@@ -1,17 +1,27 @@
 package cmd
 
 import (
+	"fmt"
+	"log"
 	"os"
+	"os/exec"
 )
 
-func Example() {
+func Example_buildCommand() {
+	dir := os.Getenv("JAMGO_DIR")
 	os.Chdir("testdata")
+	defer os.Chdir("..")
 	cmd := initCommand()
 	cmd.SetArgs([]string{"buildTest"})
 	cmd.Execute()
 
 	os.Chdir("buildTest")
-	cmd = buildCommand()
-	cmd.Execute()
+	defer os.Chdir("..")
+	c := exec.Command("go", "mod", "edit", "-replace", fmt.Sprintf("github.com/SamtheSaint/jamgo=%s", dir))
+	if e := c.Run(); e != nil {
+		log.Fatalln(e)
+	}
+
+	buildCommand().Execute()
 	//Output:
 }

@@ -48,8 +48,10 @@ func Benchmark_createDefault(b *testing.B) {
 }
 
 func Example_initCommand() {
+	os.Chdir("testdata")
+	defer os.Chdir("..")
 	cmd := initCommand()
-	cmd.SetArgs([]string{"testdata/tmp1"})
+	cmd.SetArgs([]string{"tmp"})
 	cmd.Execute()
 	//Output:
 }
