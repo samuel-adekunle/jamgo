@@ -129,7 +129,7 @@ func createPageFromTemplate(name string, tpl *template.Template) {
 		}
 		defer page.Close()
 
-		err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), <-pageData)
+		err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), p)
 		if err != nil {
 			log.Fatalln(err)
 		}
