@@ -5,12 +5,19 @@ import (
 	"log"
 	"os"
 	"os/exec"
+
+	"github.com/spf13/viper"
 )
 
 func Example_buildCommand() {
-	dir := os.Getenv("JAMGO_DIR")
+	viper.SetConfigFile("../.jamgo")
+	viper.SetConfigType("yaml")
+	viper.ReadInConfig()
+	dir := viper.GetString("DIR")
+
 	os.Chdir("testdata")
 	defer os.Chdir("..")
+
 	cmd := initCommand()
 	cmd.SetArgs([]string{"buildTest"})
 	cmd.Execute()

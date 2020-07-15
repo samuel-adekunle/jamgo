@@ -22,28 +22,3 @@ func Execute() {
 	// 	log.Fatalln(err)
 	// }
 }
-
-func init() {
-	cobra.OnInitialize(initConfig)
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	// Find home directory.
-	// home, err := homedir.Dir()
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-
-	// // Search config in home directory with name ".jamgo" (without extension).
-	// viper.AddConfigPath(home)
-	// viper.SetConfigName(".jamgo")
-	// viper.SetConfigType("yaml")
-
-	// viper.AutomaticEnv() // read in environment variables that match
-
-	// // If a config file is found, read it in.
-	// if err := viper.ReadInConfig(); err != nil {
-	// 	log.Fatalln(err)
-	// }
-}

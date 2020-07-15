@@ -13,7 +13,3 @@ var newCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(newCmd)
 }
-
-func help() {
-
-}

@@ -17,6 +17,7 @@ Jamgo is a minimal, superfast golang static site generator.
     - [Template](#template)
   * [Shell Completion](#shell-completion)
   * [Help](#help)
+- [Testing](#testing)
 - [License](#license)
 
 # Overview
@@ -235,6 +236,31 @@ The [`completion`](/.docs/jamgo_completion.md) command enables shell completion,
 The help command can be used to bring up the help information for any command.
 
 Usage: `jamgo help [command]`
+
+# Testing
+
+To run the testbench for the commands:
+
+1. Clone the Repository
+```bash
+git clone https://github.com/SamtheSaint/jamgo.git
+cd jamgo
+```
+2. Create a configuration file in the root directory `.jamgo` and store the root directory as the DIR variable
+```bash
+touch .jamgo
+echo "DIR: $(pwd)" >> .jamgo
+```
+3. Navigate to the cmd directory and create a `testdata` directory
+```bash
+cd cmd
+mkdir testdata
+```
+4. Run the tests
+```bash
+go test . -v
+```
+> -v is for verbose mode, optional but provides more information
 
 # License
 
