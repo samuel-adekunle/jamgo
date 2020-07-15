@@ -4,57 +4,32 @@ Generate completion script
 
 ### Synopsis
 
-#### Bash:
+To load completions:
 
-##### To load completions for current session:
+Bash:
 
-```
-source <(jamgo completion bash)
-```
+$ source <(yourprogram completion bash)
 
-##### To load completions for all sessions, execute once:
+# To load completions for each session, execute once:
+Linux:
+  $ yourprogram completion bash > /etc/bash_completion.d/yourprogram
+MacOS:
+  $ yourprogram completion bash > /usr/local/etc/bash_completion.d/yourprogram
 
-##### Linux:
+Zsh:
 
-```
-jamgo completion bash > /etc/bash_completion.d/jamgo
-```
+$ source <(yourprogram completion zsh)
 
-##### MacOS:
+# To load completions for each session, execute once:
+$ yourprogram completion zsh > "${fpath[1]}/_yourprogram"
 
-```
-jamgo completion bash > /usr/local/etc/bash_completion.d/jamgo
-```
+Fish:
 
-#### Zsh:
+$ yourprogram completion fish | source
 
-##### To load completions for current session:
+# To load completions for each session, execute once:
+$ yourprogram completion fish > ~/.config/fish/completions/yourprogram.fish
 
-```
-source <(jamgo completion zsh)
-```
-
-##### To load completions for all sessions, execute once:
-
-```
-jamgo completion zsh > "${fpath[1]}/_jamgo"
-```
-
-#### Fish:
-
-##### To load completions for current session:
-
-```
-jamgo completion fish | source
-```
-
-###### To load completions for all sessions, execute once:
-
-```
-jamgo completion fish > ~/.config/fish/completions/jamgo.fish
-```
-
-### General Usage
 
 ```
 jamgo completion [bash|zsh|fish|powershell]

@@ -6,10 +6,6 @@ Create a new resource.
 
 Create a new resource.
 
-```
-jamgo new [resource] [flags]
-```
-
 ### Options
 
 ```

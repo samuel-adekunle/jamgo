@@ -16,6 +16,7 @@ Jamgo is a minimal, superfast golang static site generator.
     - [Page](#page)
     - [Template](#template)
   * [Shell Completion](#shell-completion)
+  * [Help](#help)
 <!-- - [Contributing](#contributing) -->
 - [License](#license)
 
@@ -80,7 +81,7 @@ jamgo build --dir public
 
 Jamgo has a very reduced set of commands to minimize complexity and enabling ease of development. A copy of the `cobra` generated markdown documentation for each command can be found in the `docs` directory of this repository.
 
-The root command [`jamgo`](./docs/jamgo.md) doesn't do anything and will need to be chained with one of the commands below
+The root command [`jamgo`](./docs/jamgo.md) doesn't do anything and needs to be chained with one of the commands below
 
 Usage: `jamgo [command] [flags]`
 
@@ -113,18 +114,130 @@ The `{page}.gohtml` describes the structure of the page, and can make use of tem
 If generating multiple pages from a single template is required, the template is designated as `{page}_multiple.gohtml` and the multiple pages generated will be found at the `{page}` directory of the build directory. Eash file would be designated as `{page} | {Title}.html`. For example:
 
 ```
-INSERT PUBLIC DIR TREE
+public
+├── about.html
+├── blog
+│   ├── blog | 1.html
+│   ├── blog | 2.html
+│   └── blog | 3.html
+├── blog.html
+└── index.html
+```
+
+The `{page}.go` file acts as a configuration file for each website, and is executed before each page is generated. Page data is passed in through this file, and all data initialization, fetching or manipulation should be done here. For example, the `blog.go` page used above:
+
+```go
+package main
+
+import "github.com/SamtheSaint/jamgo/tools"
+
+// PageData supples data for the page to parse.
+// Parses {folderName}.gohtml template and
+// is stored in the root directory of the build directory
+// should be left as nil if only multiple page needed
+var PageData tools.Page
+
+// PageDataCollection is used to generate multiple pages from the same template
+// uses template {folderName}_multiple.gohtml and is stored in
+// {buildDir}/{folderName}
+// should be left as nil if only single page needed
+var PageDataCollection []tools.Page
+
+func init() {
+	PageData = tools.Page{
+		Title: "Enter Title Here",
+		Data:  nil,
+	}
+	PageDataCollection = nil
+}
+```
+
+> _Note:_ Data in PageData and PageDataCollection must be of type _tools.Page_ in order for page to render properly.
+
+> _Tip:_ The Data field is an empty interface so any and all data can go in there.
+
+Usage:
+```
+jamgo build [flags]
+```
+
+Flags: 
+```
+-d, --dir (build directory, default "public")
+-h, --help (help for build)
 ```
 
 ## Init
 
+The init command simply sets up a barebone jamgo app with the basic requirements and structure. The folder structure is shown in the [getting started](#getting-started) section.
+
+Usage:
+```
+jamgo init [name] [flags]
+```
+
+Flags: 
+```
+-h, --help (help for init)
+```
+
 ## New
 
-### Page
+The new command is the recommend way for generating new resources when building your site. It needs to be chained together with the type of resource used.
 
-### Template
+Usage:
+```
+jamgo new [resource] [flags]
+```
+
+Flags: 
+```
+-h, --help (help for new)
+```
+
+## Page
+
+The Page sub command is used for generating new pages for the website. It generates the directory, .gohtml templates and .go config file. 
+
+Usage:
+```
+jamgo new page [name] [flags]
+```
+
+Flags: 
+```
+-m, --multiple (toggles generation of multiple page template)
+-h, --help (help for page)
+```
+
+## Template
+
+The Template sub command is used for generating new templates to be used in the pages. It generates the .gohtml template in the templates directory.
+
+Usage:
+```
+jamgo new template [name] [flags]
+```
+
+Flags: 
+```
+-h, --help (help for template)
+```
 
 ## Shell Completion
+
+The completion command enables shell completion, which in addition to cobra's nearest command suggestion makes for a very smooth developer experience. To set up the shell completion, follow [this guide](./docs/jamgo_completion.md). Currently supported shells include:
+
+- Bash
+- Zsh
+- Fish
+- Powershell
+
+## Help
+
+The help command can be used to bring up the help information for any command.
+
+Usage: `jamgo help [command]`
 
 # License
 

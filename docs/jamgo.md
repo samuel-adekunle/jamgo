@@ -6,10 +6,6 @@ Jamgo is a minimal, superfast golang static site generator
 
 Jamgo is a minimal, superfast golang static site generator
 
-```
-jamgo [command] [flags]
-```
-
 ### Options
 
 ```
@@ -19,6 +15,7 @@ jamgo [command] [flags]
 ### SEE ALSO
 
 * [jamgo build](jamgo_build.md)	 - Build website in specified directory.
+* [jamgo completion](jamgo_completion.md)	 - Generate completion script
 * [jamgo init](jamgo_init.md)	 - Initialize a new jamgo application
 * [jamgo new](jamgo_new.md)	 - Create a new resource.
 
