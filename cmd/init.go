@@ -12,67 +12,65 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func init() {
+	rootCmd.AddCommand(initCommand())
+}
+
 // initCmd represents the init command
-var initCmd = &cobra.Command{
-	Use:   "init [name]",
-	Short: "Initialize a new jamgo application",
-	Args:  cobra.ExactArgs(1),
+func initCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "init [name]",
+		Short: "Initialize a new jamgo application",
+		Args:  cobra.ExactArgs(1),
 
-	Run: func(cmd *cobra.Command, args []string) {
-		err := os.MkdirAll(args[0], os.ModePerm)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		err = os.Chdir(args[0])
-		if err != nil {
-			log.Fatalln(err)
-		}
+		Run: func(cmd *cobra.Command, args []string) {
+			os.MkdirAll(args[0], os.ModePerm)
+			os.Chdir(args[0])
+			os.MkdirAll("pages/templates", os.ModePerm)
+			os.MkdirAll("assets/img", os.ModePerm)
+			os.MkdirAll("assets/css", os.ModePerm)
+			os.MkdirAll("assets/js", os.ModePerm)
 
-		var wg sync.WaitGroup
+			var wg sync.WaitGroup
+			wg.Add(5)
+			go func() {
+				createDefault("pages/templates", "head")
+				wg.Done()
+			}()
+			go func() {
+				go createDefault("pages/templates", "header")
+				wg.Done()
+			}()
+			go func() {
+				createDefault("pages/templates", "footer")
+				wg.Done()
+			}()
+			go func() {
+				cmd := exec.Command("jamgo", "new", "page", "index")
+				err := cmd.Run()
+				if err != nil {
+					log.Fatalln(err)
+				}
+				wg.Done()
+			}()
 
-		os.MkdirAll("pages/templates", os.ModePerm)
-		os.MkdirAll("assets/img", os.ModePerm)
-		os.MkdirAll("assets/css", os.ModePerm)
-		os.MkdirAll("assets/js", os.ModePerm)
+			go func() {
+				cmd := exec.Command("go", "mod", "init", args[0])
+				err := cmd.Run()
+				if err != nil {
+					log.Fatalln(err)
+				}
+				cmd = exec.Command("go", "mod", "edit", "-require", "github.com/SamtheSaint/jamgo@master")
+				err = cmd.Run()
+				if err != nil {
+					log.Fatalln(err)
+				}
+				wg.Done()
+			}()
 
-		wg.Add(5)
-		go func() {
-			createDefault("pages/templates", "head")
-			wg.Done()
-		}()
-		go func() {
-			go createDefault("pages/templates", "header")
-			wg.Done()
-		}()
-		go func() {
-			createDefault("pages/templates", "footer")
-			wg.Done()
-		}()
-		go func() {
-			cmd := exec.Command("jamgo", "new", "page", "index")
-			err := cmd.Run()
-			if err != nil {
-				log.Fatalln(err)
-			}
-			wg.Done()
-		}()
-
-		go func() {
-			cmd := exec.Command("go", "mod", "init", args[0])
-			err := cmd.Run()
-			if err != nil {
-				log.Fatalln(err)
-			}
-			cmd = exec.Command("go", "mod", "edit", "-require", "github.com/SamtheSaint/jamgo@master")
-			err = cmd.Run()
-			if err != nil {
-				log.Fatalln(err)
-			}
-			wg.Done()
-		}()
-
-		wg.Wait()
-	},
+			wg.Wait()
+		},
+	}
 }
 
 func createDefault(path, name string) {
@@ -87,8 +85,4 @@ func createDefault(path, name string) {
 	}
 	defer r.Body.Close()
 	io.Copy(f, r.Body)
-}
-
-func init() {
-	rootCmd.AddCommand(initCmd)
 }

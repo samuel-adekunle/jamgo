@@ -17,53 +17,52 @@ import (
 	"github.com/SamtheSaint/jamgo/tools"
 )
 
-// buildCmd represents the build command
-var buildCmd = &cobra.Command{
-	Use:   "build",
-	Short: "Build website in specified directory.",
-	Run: func(cmd *cobra.Command, args []string) {
-		buildSite()
-	},
-}
-
 var fset *token.FileSet
 var buildDir, rootDir string
 
 func init() {
-	rootCmd.AddCommand(buildCmd)
+	cmd := buildCommand()
 	fset = token.NewFileSet()
-
-	buildCmd.Flags().StringVarP(&buildDir, "dir", "d", "public", "Directory where website is built.")
-	rootDir, _ = os.Getwd()
+	cmd.Flags().StringVarP(&buildDir, "dir", "d", "public", "Directory where website is built.")
+	rootCmd.AddCommand(cmd)
 }
 
-func buildSite() {
-	var tpl *template.Template
-	tpl = template.Must(tpl.ParseGlob("pages/*/*.gohtml"))
+// buildCommand represents the build command
+func buildCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "build",
+		Short: "Build website in specified directory.",
+		Run: func(cmd *cobra.Command, args []string) {
+			var tpl *template.Template
+			rootDir, _ = os.Getwd()
+			tpl = template.Must(tpl.ParseGlob("pages/*/*.gohtml"))
 
-	err := os.MkdirAll(buildDir, os.ModePerm)
-	if err != nil {
-		log.Fatalln(err)
+			err := os.MkdirAll(buildDir, os.ModePerm)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			files, err := ioutil.ReadDir("pages")
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			var wg sync.WaitGroup
+			wg.Add(len(files) - 1)
+
+			for _, f := range files {
+				if page := f.Name(); page != "templates" {
+					go func() {
+						createPageFromTemplate(page, tpl)
+						wg.Done()
+					}()
+				}
+			}
+
+			wg.Wait()
+		},
 	}
 
-	files, err := ioutil.ReadDir("pages")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	var wg sync.WaitGroup
-	wg.Add(len(files) - 1)
-
-	for _, f := range files {
-		if page := f.Name(); page != "templates" {
-			go func() {
-				createPageFromTemplate(page, tpl)
-				wg.Done()
-			}()
-		}
-	}
-
-	wg.Wait()
 }
 
 func getPageData(name string, page chan<- *tools.Page, multiplePage chan<- *[]tools.Page) {
