@@ -17,14 +17,11 @@ Jamgo is a minimal, superfast golang static site generator.
     - [Template](#template)
   * [Shell Completion](#shell-completion)
   * [Help](#help)
-<!-- - [Contributing](#contributing) -->
 - [License](#license)
 
 # Overview
 
-Jamgo is a superfast, minimal golang static site generator
-The command line interface is designed to be quick, lightweight and simple to use.
-Jamgo doesn't impose any structure on the website and allows complete developer freedom.
+Jamgo is a superfast, minimal golang static site generator. The command line interface is designed to be quick, lightweight and simple to use.
 
 # Installing
 
@@ -45,7 +42,7 @@ To get a specific verison, [look here](https://github.com/SamtheSaint/jamgo/rele
 
 # Getting Started
 
-Getting started with jamgo is made as easy as possible. The [init command](./docs/jamgo_init.md) sets up the recommended folder structure for a minimal barebones jamgo application. To get started run:
+Getting started with jamgo is made as easy as possible. The `init command` sets up the recommended folder structure for a minimal barebones jamgo application. To get started run:
 
 ```bash
 jamgo init first-app
@@ -89,7 +86,7 @@ Flags: `-h, --help (help for jamgo)`
 
 ## Build
 
-The build command generates the html website in the directory of choice. It builds the pages in the `pages` directory of the project. Each page will need to be in its own directory, for example:
+The [`build`](./docs/jamgo_build.md) command generates the html website in the directory of choice. It builds the pages in the `pages` directory of the project. Each page will need to be in its own directory, for example:
 
 ```
 pages
@@ -169,7 +166,7 @@ Flags:
 
 ## Init
 
-The init command simply sets up a barebone jamgo app with the basic requirements and structure. The folder structure is shown in the [getting started](#getting-started) section.
+The [`init`](./docs/jamgo_init.md) command simply sets up a barebone jamgo app with the basic requirements and structure. The folder structure is shown in the [getting started](#getting-started) section.
 
 Usage:
 ```
@@ -183,7 +180,7 @@ Flags:
 
 ## New
 
-The new command is the recommend way for generating new resources when building your site. It needs to be chained together with the type of resource used.
+The [`new`](./docs/jamgo_new.md) command is the recommend way for generating new resources when building your site. It needs to be chained together with the type of resource used.
 
 Usage:
 ```
@@ -197,7 +194,7 @@ Flags:
 
 ## Page
 
-The Page sub command is used for generating new pages for the website. It generates the directory, .gohtml templates and .go config file. 
+The [`Page`](./docs/jamgo_new_page.md) sub command is used for generating new pages for the website. It generates the directory, gohtml templates and go config file. 
 
 Usage:
 ```
@@ -212,7 +209,7 @@ Flags:
 
 ## Template
 
-The Template sub command is used for generating new templates to be used in the pages. It generates the .gohtml template in the templates directory.
+The [`Template`](./docs/jamgo_new_template.md) sub command is used for generating new templates to be used in the pages. It generates the gohtml template in the templates directory.
 
 Usage:
 ```
@@ -226,7 +223,7 @@ Flags:
 
 ## Shell Completion
 
-The completion command enables shell completion, which in addition to cobra's nearest command suggestion makes for a very smooth developer experience. To set up the shell completion, follow [this guide](./docs/jamgo_completion.md). Currently supported shells include:
+The [`completion`](/.docs/jamgo_completion.md) command enables shell completion, which in addition to cobra's nearest command suggestion makes for a very smooth developer experience. To set up the shell completion, follow [this guide](./docs/jamgo_completion.md). Currently supported shells include:
 
 - Bash
 - Zsh
