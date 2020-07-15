@@ -42,7 +42,7 @@ func Execute() {
 		log.Fatalln(err)
 	}
 	//ANCHOR - uncomment to generate docs
-	// if err := doc.GenMarkdownTree(rootCmd, "./docs"); err != nil {
+	// if err := doc.GenMarkdownTree(rootCmd, "./doc"); err != nil {
 	// 	log.Fatalln(err)
 	// }
 }

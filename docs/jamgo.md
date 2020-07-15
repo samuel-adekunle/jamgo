@@ -6,6 +6,10 @@ Jamgo is a minimal, superfast golang static site generator
 
 Jamgo is a minimal, superfast golang static site generator
 
+```
+jamgo [command] [flags]
+```
+
 ### Options
 
 ```

@@ -40,6 +40,15 @@ var initCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 
 	Run: func(cmd *cobra.Command, args []string) {
+		err := os.MkdirAll(args[0], os.ModePerm)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		err = os.Chdir(args[0])
+		if err != nil {
+			log.Fatalln(err)
+		}
+
 		var wg sync.WaitGroup
 
 		os.MkdirAll("pages/templates", os.ModePerm)

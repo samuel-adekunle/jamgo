@@ -122,15 +122,17 @@ func createPageFromTemplate(name string, tpl *template.Template) {
 	multiplePageData := make(chan *[]tools.Page)
 	go getPageData(name, pageData, multiplePageData)
 
-	page, err := os.Create(fmt.Sprintf("%s/%s.html", buildDir, name))
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer page.Close()
+	if p := <-pageData; p != nil {
+		page, err := os.Create(fmt.Sprintf("%s/%s.html", buildDir, name))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer page.Close()
 
-	err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), <-pageData)
-	if err != nil {
-		log.Fatalln(err)
+		err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), <-pageData)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 
 	if multiplePage := *<-multiplePageData; multiplePage != nil {
@@ -148,7 +150,7 @@ func createPageFromTemplate(name string, tpl *template.Template) {
 				}
 				defer page.Close()
 
-				err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s.gohtml", name), p)
+				err = tpl.ExecuteTemplate(page, fmt.Sprintf("%s_multiple.gohtml", name), p)
 				if err != nil {
 					log.Fatalln(err)
 				}

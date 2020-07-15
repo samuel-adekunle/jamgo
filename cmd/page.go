@@ -42,13 +42,21 @@ var pageCmd = &cobra.Command{
 	},
 }
 
+var multiple bool
+
 func init() {
 	newCmd.AddCommand(pageCmd)
+
+	pageCmd.Flags().BoolVarP(&multiple, "multiple", "m", false, "Toggle creation of multi-page template")
 }
 
 func createPage(name string) {
 	var wg sync.WaitGroup
-	wg.Add(2)
+	if multiple {
+		wg.Add(3)
+	} else {
+		wg.Add(2)
+	}
 
 	err := os.MkdirAll(fmt.Sprintf("pages/%s", name), os.ModePerm)
 	if err != nil {
@@ -71,6 +79,25 @@ func createPage(name string) {
 		io.Copy(f, r.Body)
 		wg.Done()
 	}()
+
+	if multiple {
+		go func() {
+			f, err := os.Create(fmt.Sprintf("pages/%s/%s_multiple.gohtml", name, name))
+			if err != nil {
+				log.Fatalln(err)
+			}
+			defer f.Close()
+
+			r, err := http.Get("https://raw.githubusercontent.com/SamtheSaint/jamgo/master/default/page.gohtml")
+			if err != nil {
+				log.Fatalln(err)
+			}
+			defer r.Body.Close()
+
+			io.Copy(f, r.Body)
+			wg.Done()
+		}()
+	}
 
 	go func() {
 		g, err := os.Create(fmt.Sprintf("pages/%s/%s.go", name, name))

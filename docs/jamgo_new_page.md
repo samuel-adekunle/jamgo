@@ -13,7 +13,8 @@ jamgo new page [name] [flags]
 ### Options
 
 ```
-  -h, --help   help for page
+  -h, --help       help for page
+  -m, --multiple   Toggle creation of multi-page template
 ```
 
 ### SEE ALSO
