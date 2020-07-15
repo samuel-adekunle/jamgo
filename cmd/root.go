@@ -41,6 +41,10 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalln(err)
 	}
+	//ANCHOR - uncomment to generate docs
+	// if err := doc.GenMarkdownTree(rootCmd, "./docs"); err != nil {
+	// 	log.Fatalln(err)
+	// }
 }
 
 func init() {
